@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Voting Dapp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link rel=icon type=image/png sizes=32x32 href="https://bloxberg.org/favicon-32x32.png">
+    <link rel=icon type=image/png sizes=96x96 href="https://bloxberg.org/favicon-96x96.png">
+    <link rel=icon type=image/png sizes=16x16 href="https://bloxberg.org/favicon-16x16.png">
+    <link href="assets/css/app.css" rel='stylesheet' type='text/css'>
+    <script src="assets/js/app.js"></script>
+</head>
+
+<body>
+    <header class="header">
+      <div class="container">
+        <a href="https://bloxberg.org" class="header-logo"></a>
+      </div>
+    </header>
+    <div class="container-fluid">
+       
+
+        <div class="row" id="votingcontractcontainer">
+
+            <div class="col-md-3"></div>
+  <div class="col-md-6">
+ <h1>Voting Dapp</h1>
+        <h3 style="margin-top: 0px; margin-bottom: 30px;">Sample Voting Dapp for Bloxberg</h3>
+                <table class="table table-fluid" width="100%">
+
+                    <tr>
+                        <th>Voting Contract Address</th>
+                        <td><span class="black"><span id="cf_address"></span></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Chairperson Address</th>
+                        <td><span class="black"><span id="chairperson"></span> </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Your Address</th>
+                        <td><span class="black"><span id="cb_address"></span></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Your Balance</th>
+                        <td><span class="black"><span id="cb_balance"></span></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Can you vote</th>
+                        <td><span class="black"><span id="canUserVote"></span></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Your voting weight</th>
+                        <td><span class="black"><span id="votingWeight"></span></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Open Proposals</th>
+                        <td><span class="black"><span id="numOpenProposals"></span> </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Number of Voters</th>
+                        <td><span class="black"><span id="numVoters"></span> </span>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+<div class="col-md-3"></div>
+        </div>
+
+        <div class="row" id="votingproposalcontainer">
+            <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+                <h2 style="padding-top: 20px;">Vote for Open Proposals</h2>
+                <p>Here you will see open proposals for which you haven't voted yet</p>
+
+                <!--
+<h4 style="padding-top: 20px; color:#000">Proposal #1: Do you approve the membership of XYZ for the consortium?</h4><br>
+  <form>
+  <input type="radio" name="proposal1" value="1" checked> Yes<br>
+  <input type="radio" name="proposal1" value="2"> No<br>
+</form>
+
+     <button class="btn btn-primary btn-lg" onclick="vote(1);">VOTE</button>
+     <br><br>
+   -->
+                <div id="openPropsalsContainer">
+                </div>
+
+            </div>
+
+ <div class="col-md-3"></div>
+           
+
+        </div>
+
+        <div id="status"></div>
+
+    </div>
+
+    <div class="modal fade" id="manuscriptSuccessModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Voting Successful</h4>
+                    <button type="button" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="modeltext"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" onclick="javascript:window.location.reload()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   <div id="footercontainer">
+ 
+  </div>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.0.0-beta1.js"></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

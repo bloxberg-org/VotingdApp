@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Voting Dapp Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel=icon type=image/png sizes=32x32 href="https://bloxberg.org/favicon-32x32.png">
+    <link rel=icon type=image/png sizes=96x96 href="https://bloxberg.org/favicon-96x96.png">
+    <link rel=icon type=image/png sizes=16x16 href="https://bloxberg.org/favicon-16x16.png">
+   <link href="assets/css/app.css" rel='stylesheet' type='text/css'>
+  <script src="assets/js/app.js"></script>
+</head>
+<body>
+  <header class="header">
+      <div class="container">
+        <a href="https://bloxberg.org" class="header-logo"></a>
+      </div>
+    </header>
+  <div class="container-fluid">
+    
+
+<div class="row" id="votingcontractcontainer">
+   <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <h1>Voting Dapp Admin</h1>
+    <h3 style="margin-top: 0px; margin-bottom: 30px;">Sample Voting Dapp for Bloxberg</h3>
+
+<table class="table table-fluid" width="100%">
+
+      <tr>
+        <th>Voting Contract Address</th>
+        <td><span class="black"><span id="cf_address"></span></span></td>
+      </tr> 
+
+      <tr>
+        <th>Chairperson Address</th>
+        <td><span class="black"><span id="chairperson"></span> </span></td>
+      </tr>       
+
+      <tr>
+        <th>Your Address</th>
+        <td><span class="black"><span id="cb_address"></span></span></td>
+      </tr> 
+
+      <tr>
+        <th>Your Balance</th>
+        <td><span class="black"><span id="cb_balance"></span></span></td>
+      </tr> 
+
+      <tr>
+        <th>Can you vote</th>
+        <td><span class="black"><span id="canUserVote"></span></span></td>
+      </tr> 
+
+      <tr>
+        <th>Your voting weight</th>
+        <td><span class="black"><span id="votingWeight"></span></span></td>
+      </tr> 
+
+      <tr>
+        <th>Open Proposals</th>
+        <td><span class="black"><span id="numOpenProposals"></span> </span></td>
+      </tr> 
+     
+
+      <tr>
+        <th>Number of Voters</th>
+        <td><span class="black"><span id="numVoters"></span> </span></td>
+      </tr> 
+
+      
+
+    </table>
+<div class="row" id="statuscontainer"></div>
+  </div>
+  <div class="col-md-3"></div>
+</div>
+    
+<div class="row" id="admincontainer">
+   <div class="col-md-3"></div>
+  <div class="col-md-6">
+   
+      <h2 style="padding-top: 20px;">Transact with Voting Contract</h2>
+      <p>Only chairperson can perform these actions</p>
+
+
+<h4 style="padding-top: 20px; color:#000">Create Proposal</h4><br>
+  
+  <input type="text" class="form-control" id="proposalName" placeholder="Enter proposal name (required)"><br>
+  <input type="text" class="form-control" id="optionName1" placeholder="Enter option-1 (required)"><br>
+  <input type="text" class="form-control" id="optionName2" placeholder="Enter option-2 (required)"><br>
+  <input type="text" class="form-control" id="optionName3" placeholder="Enter option-3"><br>
+  <input type="text" class="form-control" id="optionName4" placeholder="Enter option-4"><br>
+  <input type="text" class="form-control" id="optionName5" placeholder="Enter option-5"><br>
+  <input type="text" class="form-control" id="votingTime" placeholder="Enter voting time in seconds (required)"><br>
+
+
+     <button class="btn btn-primary btn-lg" onclick="createProposal();">TRANSACT</button>
+     <br><hr>
+   
+
+   <h4 style="padding-top: 20px; color:#000">Give Right to Vote</h4><br>
+  <input type="text" class="form-control" id="giveRightToVoteAddress" placeholder="Enter voter address"><br>
+     <button class="btn btn-primary btn-lg" onclick="giveRightToVote();">TRANSACT</button>
+     <br><hr>
+
+       <h4 style="padding-top: 20px; color:#000">Revoke Right to Vote</h4><br>
+  <input type="text" class="form-control" id="revokeRightToVoteAddress" placeholder="Enter voter address"><br>
+     <button class="btn btn-primary btn-lg" onclick="revokeRightToVote();">TRANSACT</button>
+     <br><hr>
+
+     <h4 style="padding-top: 20px; color:#000">Finalize Proposal</h4><br>
+  <input type="text" class="form-control" id="proposalNumber" placeholder="Enter proposal ID"><br>
+     <button class="btn btn-primary btn-lg" onclick="finalizeProposal();">TRANSACT</button>
+     <br><hr>
+
+      <h4 style="padding-top: 20px; color:#000">Read Contract</h4><br>  
+     <a href="https://blockexplorer.bloxberg.org/address/0x80b52f8ac0190297a7cf6596146d007f111aa618/read_contract" target="blank"><button class="btn btn-primary btn-lg">CLICK HERE</button></a>
+     <br><hr>
+    
+      
+      </div>
+
+       <div class="col-md-3"></div>
+  </div>
+
+</div>
+
+<div id="status"></div> 
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="myModalTitle"></h4>
+<button type="button" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+</div>
+<div class="modal-body">
+<p id="myModalText"></p>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" onclick="javascript:window.location.reload()">Close</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="myModalNoRefresh" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="myModalTitle1"></h4>
+<button type="button" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+</div>
+<div class="modal-body">
+<p id="myModalText1"></p>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
+</div>
+</div>
+</div>
+</div>
+<div id="footercontainer">
+ 
+  </div>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.0.0-beta1.js"></script>
+ <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
