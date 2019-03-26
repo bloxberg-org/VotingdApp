@@ -9,405 +9,486 @@ var canUserVote;
 var myContractInstance;
 var WAD = 1000000000000000000;
 var modalShow = false;
-var contract_address = "0x80b52f8ac0190297a7cf6596146d007f111aa618";
+var contract_address = "0xafee37f15fc04ab0dee6924b44a6082f06ea1f38";
 var contract_abi = [
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "winningProposalOption",
-        "type": "uint256"
-      }
-    ],
-    "name": "ProposalEnded",
-    "type": "event"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "proposalName",
-        "type": "bytes32"
-      },
-      {
-        "name": "optionNames",
-        "type": "bytes32[]"
-      },
-      {
-        "name": "votingTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "createProposal",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      }
-    ],
-    "name": "finalizeProposal",
-    "outputs": [
-      {
-        "name": "proposalName",
-        "type": "bytes32"
-      },
-      {
-        "name": "winningProposalOption",
-        "type": "uint256"
-      },
-      {
-        "name": "winningProposalOptionName",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "voterAddress",
-        "type": "address"
-      }
-    ],
-    "name": "giveRightToVote",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "voterAddress",
-        "type": "address"
-      }
-    ],
-    "name": "revokeRightToVote",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "name": "proposalOption",
-        "type": "uint256"
-      }
-    ],
-    "name": "vote",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "voter",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "proposalOption",
-        "type": "uint256"
-      }
-    ],
-    "name": "Voted",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "chairperson",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getProposalDetailsForVoter",
-    "outputs": [
-      {
-        "name": "proposalName",
-        "type": "bytes32"
-      },
-      {
-        "name": "numOptions",
-        "type": "uint256"
-      },
-      {
-        "name": "optionNames",
-        "type": "bytes32[]"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "name": "proposalOptionNum",
-        "type": "uint256"
-      }
-    ],
-    "name": "getProposalOptionName",
-    "outputs": [
-      {
-        "name": "proposalOptionName",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      }
-    ],
-    "name": "getProposalResult",
-    "outputs": [
-      {
-        "name": "proposalName",
-        "type": "bytes32"
-      },
-      {
-        "name": "winningProposalOption",
-        "type": "uint256"
-      },
-      {
-        "name": "winningProposalOptionName",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "getVoterDetail",
-    "outputs": [
-      {
-        "name": "result",
-        "type": "bool"
-      },
-      {
-        "name": "weight",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "hasUserVoted",
-    "outputs": [
-      {
-        "name": "result",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "numEndedProposals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "numProposals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "numVoters",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "proposals",
-    "outputs": [
-      {
-        "name": "name",
-        "type": "bytes32"
-      },
-      {
-        "name": "votingStart",
-        "type": "uint256"
-      },
-      {
-        "name": "votingTime",
-        "type": "uint256"
-      },
-      {
-        "name": "numOptions",
-        "type": "uint256"
-      },
-      {
-        "name": "numCastedVotes",
-        "type": "uint256"
-      },
-      {
-        "name": "isEnded",
-        "type": "bool"
-      },
-      {
-        "name": "winningProposalOption",
-        "type": "uint256"
-      },
-      {
-        "name": "winningProposalOptionName",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "voters",
-    "outputs": [
-      {
-        "name": "addr",
-        "type": "address"
-      },
-      {
-        "name": "rightToVote",
-        "type": "bool"
-      },
-      {
-        "name": "weight",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  }
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newAddress",
+				"type": "address"
+			}
+		],
+		"name": "changeChairman",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "proposalName",
+				"type": "string"
+			},
+			{
+				"name": "optionNames",
+				"type": "bytes32[]"
+			},
+			{
+				"name": "votingTime",
+				"type": "uint256"
+			},
+			{
+				"name": "proposalBatchNumber",
+				"type": "uint256"
+			}
+		],
+		"name": "createProposal",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			}
+		],
+		"name": "finalizeProposal",
+		"outputs": [
+			{
+				"name": "proposalName",
+				"type": "string"
+			},
+			{
+				"name": "winningProposalOption",
+				"type": "uint256"
+			},
+			{
+				"name": "winningProposalOptionName",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "voterAddress",
+				"type": "address"
+			}
+		],
+		"name": "giveRightToVoteFounder",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "voterAddress",
+				"type": "address"
+			}
+		],
+		"name": "giveRightToVoteMember",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "voterAddress",
+				"type": "address"
+			}
+		],
+		"name": "revokeRightToVote",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_new",
+				"type": "address"
+			}
+		],
+		"name": "setOwner",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"name": "proposalOption",
+				"type": "uint256"
+			}
+		],
+		"name": "vote",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "proposalOption",
+				"type": "uint256"
+			}
+		],
+		"name": "Voted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "winningProposalOption",
+				"type": "uint256"
+			}
+		],
+		"name": "ProposalEnded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "old",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "current",
+				"type": "address"
+			}
+		],
+		"name": "NewOwner",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "chairperson",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getProposalDetailsForVoter",
+		"outputs": [
+			{
+				"name": "proposalName",
+				"type": "string"
+			},
+			{
+				"name": "numOptions",
+				"type": "uint256"
+			},
+			{
+				"name": "optionNames",
+				"type": "bytes32[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"name": "proposalOptionNum",
+				"type": "uint256"
+			}
+		],
+		"name": "getProposalOptionName",
+		"outputs": [
+			{
+				"name": "proposalOptionName",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			}
+		],
+		"name": "getProposalResult",
+		"outputs": [
+			{
+				"name": "proposalName",
+				"type": "string"
+			},
+			{
+				"name": "winningProposalOption",
+				"type": "uint256"
+			},
+			{
+				"name": "winningProposalOptionName",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getVoterDetail",
+		"outputs": [
+			{
+				"name": "result",
+				"type": "bool"
+			},
+			{
+				"name": "weight",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "proposal",
+				"type": "uint256"
+			},
+			{
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "hasUserVoted",
+		"outputs": [
+			{
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "numEndedProposals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "numProposals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "numVoters",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "proposals",
+		"outputs": [
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "votingStart",
+				"type": "uint256"
+			},
+			{
+				"name": "votingTime",
+				"type": "uint256"
+			},
+			{
+				"name": "proposalBatch",
+				"type": "uint256"
+			},
+			{
+				"name": "numOptions",
+				"type": "uint256"
+			},
+			{
+				"name": "numCastedVotes",
+				"type": "uint256"
+			},
+			{
+				"name": "isEnded",
+				"type": "bool"
+			},
+			{
+				"name": "winningProposalOption",
+				"type": "uint256"
+			},
+			{
+				"name": "winningProposalOptionName",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "voters",
+		"outputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "rightToVote",
+				"type": "bool"
+			},
+			{
+				"name": "weight",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
 ];
 
 
@@ -442,6 +523,7 @@ function refreshDataNew() {
       return getDataPromiseWithArgs(myContractInstance.getVoterDetail, account);
     }).then(
     function(result) {
+			console.log(result[1] + "test")
       console.log("canUserVote = " + result[0]);
       canUserVote=result[0];
       if (canUserVote) {
@@ -488,7 +570,7 @@ function getProposalDetail(proposalNumber) {
       if (numOptions == 0) {
         //htmlstr+="<h4 style=\"padding-top: 20px; color:#000\">Proposal #"+proposalNumber+": Already voted</h4><br>";
       } else {
-        htmlstr += "<h4 style=\"padding-top: 20px; color:#000\">Proposal #" + proposalNumber + ": " + web3.toAscii(proposalName) + "</h4><br>";
+        htmlstr += "<h4 style=\"padding-top: 20px; color:#000\">Proposal #" + proposalNumber + ": " + proposalName + "</h4><br>";
 
         for (j = 0; j < numOptions; j++) {
           if (j == 0) {
@@ -593,7 +675,6 @@ function vote(proposal) {
           //location.reload();
           $("#manuscriptSuccessModal").modal();
           $("#modeltext").html("Your vote for Proposal #" + proposal + " (selected Option #" + proposalOption + ") has been recorded successfully. Transaction hash: " + receipt.transactionHash);
-
           //setTimeout(function() {
           //    loadPage();
           //   }, 4000);
@@ -606,6 +687,7 @@ function vote(proposal) {
 var loadPage = () => {
   setTimeout(() => {
     if (!window.web3 || !window.web3.eth.accounts[0]) {
+
       $("#votingcontractcontainer").hide();
       $("#votingproposalcontainer").hide();
       $("#footercontainer").html("<footer class=\"footer\" style=\"position:absolute;\"><div class=\"container\"><p class=\"rights\"><br>2019 Bloxberg Network. All rights reserved.</p><a class=\"logo\" href='/'></a><div class=\"socials\"></div></div></footer>");

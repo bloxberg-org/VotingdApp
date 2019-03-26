@@ -10,31 +10,28 @@ var canUserVote;
 var myContractInstance;
 var WAD = 1000000000000000000;
 var modalShow = false;
-var contract_address  = "0x80b52f8ac0190297a7cf6596146d007f111aa618";
-var contract_abi=[
+var contract_address = "0x2dfbafe223d9ab442b7af35ac580642ec3a26917";
+var contract_abi = [
   {
-    "anonymous": false,
+    "constant": false,
     "inputs": [
       {
-        "indexed": false,
-        "name": "proposal",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "winningProposalOption",
-        "type": "uint256"
+        "name": "newAddress",
+        "type": "address"
       }
     ],
-    "name": "ProposalEnded",
-    "type": "event"
+    "name": "changeChairman",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "constant": false,
     "inputs": [
       {
         "name": "proposalName",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "name": "optionNames",
@@ -42,6 +39,10 @@ var contract_abi=[
       },
       {
         "name": "votingTime",
+        "type": "uint256"
+      },
+      {
+        "name": "proposalBatch",
         "type": "uint256"
       }
     ],
@@ -63,7 +64,7 @@ var contract_abi=[
     "outputs": [
       {
         "name": "proposalName",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "name": "winningProposalOption",
@@ -86,7 +87,21 @@ var contract_abi=[
         "type": "address"
       }
     ],
-    "name": "giveRightToVote",
+    "name": "giveRightToVoteFounder",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "voterAddress",
+        "type": "address"
+      }
+    ],
+    "name": "giveRightToVoteMember",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -101,6 +116,20 @@ var contract_abi=[
       }
     ],
     "name": "revokeRightToVote",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_new",
+        "type": "address"
+      }
+    ],
+    "name": "setOwner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -125,6 +154,12 @@ var contract_abi=[
     "type": "function"
   },
   {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -147,10 +182,38 @@ var contract_abi=[
     "type": "event"
   },
   {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proposal",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "winningProposalOption",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProposalEnded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "old",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "current",
+        "type": "address"
+      }
+    ],
+    "name": "NewOwner",
+    "type": "event"
   },
   {
     "constant": true,
@@ -182,7 +245,7 @@ var contract_abi=[
     "outputs": [
       {
         "name": "proposalName",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "name": "numOptions",
@@ -232,7 +295,7 @@ var contract_abi=[
     "outputs": [
       {
         "name": "proposalName",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "name": "winningProposalOption",
@@ -337,6 +400,20 @@ var contract_abi=[
   },
   {
     "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
     "inputs": [
       {
         "name": "",
@@ -347,7 +424,7 @@ var contract_abi=[
     "outputs": [
       {
         "name": "name",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "name": "votingStart",
@@ -355,6 +432,10 @@ var contract_abi=[
       },
       {
         "name": "votingTime",
+        "type": "uint256"
+      },
+      {
+        "name": "proposalBatch",
         "type": "uint256"
       },
       {
@@ -607,7 +688,8 @@ function createProposal() {
     $("#myModalText1").html("Please enter a valid voting time in seconds");
   }
 
-  var proposalNameHex = web3.fromAscii(proposalName);
+  // var proposalNameHex = web3.fromAscii(proposalName);
+
   var optionNamesHex = [web3.fromAscii(optionName1),web3.fromAscii(optionName2)];
   if (optionName3.length>0){
     optionNamesHex.push(web3.fromAscii(optionName3));
@@ -619,12 +701,12 @@ function createProposal() {
     optionNamesHex.push(web3.fromAscii(optionName5));
   }
 
-  console.log("proposalNameHex = " + proposalNameHex);
+  // console.log("proposalNameHex = " + proposalNameHex);
   console.log("optionNamesHex = " + optionNamesHex);
   console.log("votingTime = " + votingTime);
 
   if(!error){
-    myContractInstance.createProposal(proposalNameHex, optionNamesHex, votingTime, function(error, result) {
+    myContractInstance.createProposal(proposalName, optionNamesHex, votingTime, function(error, result) {
       if (!error) {
         getTransactionReceiptMined(result).then(
           function(receipt) {
