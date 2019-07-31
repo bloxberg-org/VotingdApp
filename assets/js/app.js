@@ -4,12 +4,14 @@ var balance;
 var numTotalProposals;
 var totalEndedProposals;
 var htmlstr = "";
+var closedhtmlstr = ""
+
 //var proposalNumber;
 var canUserVote;
 var myContractInstance;
 var WAD = 1000000000000000000;
 var modalShow = false;
-var contract_address = "0xafee37f15fc04ab0dee6924b44a6082f06ea1f38";
+var contract_address = "0x19e51afd3efa98a6e4b82d3834de174d7a33f9b5";
 var contract_abi = [
 	{
 		"constant": false,
@@ -303,6 +305,10 @@ var contract_abi = [
 			{
 				"name": "winningProposalOptionName",
 				"type": "bytes32"
+			},
+			{
+				"name": "proposalBatchNumber",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -523,7 +529,6 @@ function refreshDataNew() {
       return getDataPromiseWithArgs(myContractInstance.getVoterDetail, account);
     }).then(
     function(result) {
-			console.log(result[1] + "test")
       console.log("canUserVote = " + result[0]);
       canUserVote=result[0];
       if (canUserVote) {
@@ -533,13 +538,14 @@ function refreshDataNew() {
       }
       $("#votingWeight").html(result[1].toNumber());
 
-      return getDataPromise(myContractInstance.chairperson);
+				return getDataPromise(myContractInstance.chairperson);
     }).then(
     function(chairperson) {
       console.log("chairperson = " + chairperson);
       $("#chairperson").html(chairperson);
       if(canUserVote){
-        updateProposalsList();
+				updateProposalsList();
+				updateClosedProposalsList();
         $("#footercontainer").html("<footer class=\"footer\"><div class=\"container\"><p class=\"rights\"><br>2019 Bloxberg Network. All rights reserved.</p><a class=\"logo\" href='/'></a><div class=\"socials\"></div></div></footer>");
       }else{
         $("#openPropsalsContainer").html("<h4>You are not authorized to vote</h4>");
@@ -551,22 +557,26 @@ function refreshDataNew() {
 function updateProposalsList() {
   console.log("numTotalProposals = " + numTotalProposals);
   for (i = 1; i <= numTotalProposals; i++) {
-    getProposalDetail(i);
+		getProposalDetail(i);
+		
   }
 }
 
-function getProposalDetail(proposalNumber) {
+
+
+async function getProposalDetail(proposalNumber) {
   getDataPromiseWithTwoArgs(myContractInstance.getProposalDetailsForVoter, proposalNumber, account).then(
-    function(result) {
+    async function(result) {
+			var timeEnd = await getDataPromiseWithArgs(myContractInstance.proposals, proposalNumber).then(
+				 function (result) {
+					proposalName = result[0]
+					timeStart = timeConverter(result[1]['c'][0])
+					timeEnd = result[1]['c'][0] + result[2]['c'][0]
+					timeEnd = timeConverter(timeEnd)
+					return timeEnd
+				})
       proposalName = result[0];
       numOptions = result[1];
-      //console.log("account = "+account);
-      //console.log("resultnew = "+result);
-      console.log("proposalName = " + proposalName);
-      console.log("numOptions = " + numOptions);
-      //console.log("option-1 = "+result[2][0]);
-      //console.log("option-2 = "+result[2][1]);
-      //console.log("option-3 = "+result[2][2]);
       if (numOptions == 0) {
         //htmlstr+="<h4 style=\"padding-top: 20px; color:#000\">Proposal #"+proposalNumber+": Already voted</h4><br>";
       } else {
@@ -579,7 +589,9 @@ function getProposalDetail(proposalNumber) {
             htmlstr = htmlstr + "<input type=\"radio\" name=\"proposal" + proposalNumber + "\" value=\"" + j + "\">" + web3.toAscii(result[2][j]) + "<br>";
           }
         }
-        htmlstr = htmlstr + "<br><button class=\"btn btn-primary btn-lg\" onclick=\"vote(" + proposalNumber + ");\">VOTE</button><br><hr>";
+				htmlstr = htmlstr + "<br><button class=\"btn btn-primary btn-lg\" onclick=\"vote(" + proposalNumber + ");\">VOTE</button><br><hr>";
+				
+				htmlstr = htmlstr + "<strong>Time Voting Ends: " + timeEnd + "<br></strong>";
         $("#openPropsalsContainer").html(htmlstr);
       }
     }).then(function() {
@@ -588,6 +600,40 @@ function getProposalDetail(proposalNumber) {
     //console.log(htmlstr);
   });
 
+}
+
+async function updateClosedProposalsList() {
+	for (i = 1; i <= numTotalProposals; i++) {
+		await getClosedProposalDetail(i);
+	}
+}
+
+async function getClosedProposalDetail(proposalNumber) {
+	await getDataPromiseWithArgs(myContractInstance.proposals, proposalNumber).then(
+		async function (result) {
+			proposalName = result[0]
+			timeStart = timeConverter(result[1]['c'][0])
+			timeEnd = result[1]['c'][0]+ result[2]['c'][0]
+			timeEnd = timeConverter(timeEnd)
+			isProposalFinished = result[6]
+			numCastedVotes = result[5]['c'][0]
+			winningOption = web3.toAscii(result[8])
+			if (isProposalFinished == false) {
+				closedhtmlstr+="<h4 style=\"padding-top: 20px; color:#000\">Proposal #"+proposalNumber+": Voting has not finished</h4><br>";
+				$("#closedPropsalsContainer").html(closedhtmlstr);
+			} else {
+				closedhtmlstr += "<h4 style=\"padding-top: 20px; color:#000\">Proposal #" + proposalNumber + ": " + proposalName + "</h4><br>";
+				closedhtmlstr = closedhtmlstr + "Winning Option: " + winningOption + "<br>";
+				closedhtmlstr = closedhtmlstr + "Total Votes Casted: " + numCastedVotes + "<br>";
+				closedhtmlstr = closedhtmlstr + "Time Started: " + timeStart + "<br>";
+				closedhtmlstr = closedhtmlstr + "Time Ended: " + timeEnd + "<br>";
+				$("#closedPropsalsContainer").html(closedhtmlstr);
+			}
+		}).then(function () {
+			//htmlstr=htmlstr+"<button class=\"btn btn-primary btn-lg\" onclick=\"vote("+proposalNumber+");\">VOTE</button><br><hr>";
+			//$("#openPropsalsContainer").html(htmlstr);
+			//console.log(htmlstr);
+		});
 }
 
 function getDataPromise(varname) {
@@ -600,8 +646,8 @@ function getDataPromise(varname) {
   })
 }
 
-function getDataPromiseWithArgs(varname, args) {
-  return new Promise(function(resolve, reject) {
+async function getDataPromiseWithArgs(varname, args) {
+  return await new Promise(function(resolve, reject) {
     varname.call(args, function(error, result) {
       if (!error) {
         resolve(result);
@@ -628,7 +674,6 @@ function getBalancePromise(addr) {
         resolve(result);
       }
     })
-
   })
 }
 
@@ -662,23 +707,18 @@ function vote(proposal) {
   var proposalID = "proposal" + proposal;
   var proposalOption = $('input:radio[name=' + proposalID + ']:checked').val();
 
-  console.log("Selected proposal =" + proposal);
-  console.log("Selected proposal option =" + proposalOption);
+  console.log("Selected proposal NEWTEST =" + proposal);
+	console.log("Selected proposal option =" + proposalOption);
 
-  //setStatus("Initiating transaction... (please wait)");
+	//setStatus("Initiating transaction... (please wait)");
   myContractInstance.vote(proposal, proposalOption, function(error, result) {
     if (!error) {
-      getTransactionReceiptMined(result).then(
-        function(receipt) {
-          console.log(receipt.transactionHash);
-          //setStatus(receipt.transactionHash);
-          //location.reload();
-          $("#manuscriptSuccessModal").modal();
-          $("#modeltext").html("Your vote for Proposal #" + proposal + " (selected Option #" + proposalOption + ") has been recorded successfully. Transaction hash: " + receipt.transactionHash);
-          //setTimeout(function() {
-          //    loadPage();
-          //   }, 4000);
-        });
+       getTransactionReceiptMined(result, proposal).then(function(receipt) {
+					//location.reload();
+					//loadPage();
+          
+
+      });
     }
   });
 }
@@ -687,9 +727,9 @@ function vote(proposal) {
 var loadPage = () => {
   setTimeout(() => {
     if (!window.web3 || !window.web3.eth.accounts[0]) {
-
       $("#votingcontractcontainer").hide();
-      $("#votingproposalcontainer").hide();
+			$("#votingproposalcontainer").hide();
+			$("#closedvotingproposalcontainer").hide();
       $("#footercontainer").html("<footer class=\"footer\" style=\"position:absolute;\"><div class=\"container\"><p class=\"rights\"><br>2019 Bloxberg Network. All rights reserved.</p><a class=\"logo\" href='/'></a><div class=\"socials\"></div></div></footer>");
       $("#status").html(`
        <div>
@@ -730,33 +770,62 @@ var loadPage = () => {
 // Inital loading of the page
 if (document.readyState !== 'complete') {
   // Document has not finished loaded yet, load the page when it is complete
-  window.addEventListener('load', function() {
-    loadPage();
-  })
-} else {
-  // Document has finished loaded, load the page
-  loadPage();
-}
+  window.addEventListener('load', async() => {
+		if (window.ethereum) {
+		await ethereum.enable();
+		loadPage();
+		}
+		else if (window.web3) {
+			
+		loadPage();
+		} else {
+	
+	// Document has finished loaded, load the page
+	$("#votingcontractcontainer").hide();
+	$("#votingproposalcontainer").hide();
+	$("#closedvotingproposalcontainer").hide();
+	$("#footercontainer").html("<footer class=\"footer\" style=\"position:absolute;\"><div class=\"container\"><p class=\"rights\"><br>2019 Bloxberg Network. All rights reserved.</p><a class=\"logo\" href='/'></a><div class=\"socials\"></div></div></footer>");
+	$("#status").html(`
+       <div>
+         <div class="pane before-error">
+           <h2>Could not connect to Bloxberg</h2>
+           <p>
 
-function getTransactionReceiptMined(txHash, interval) {
+             Consider installing <a href=https://metamask.io>MetaMask</a> or another Ethereum client.
+
+             If you are using MetaMask, you may need to unlock your account and connect to the Bloxberg network using custom RPC endpoint https://bloxberg.org/eth/. You can also try disabling and re-enabling
+             the MetaMask plugin by going to <a href=chrome://extensions>chrome://extensions</a>.
+           </p>
+
+           <p>Please reload this page and try again.</p>
+         </div>
+       </div>
+     `	);
+			}
+		})
+	}
+
+
+
+
+function getTransactionReceiptMined(txHash, proposal, interval) {
   var transactionReceiptAsync;
   interval = interval ? interval : 500;
-  transactionReceiptAsync = function(txHash, resolve, reject) {
+  transactionReceiptAsync = function(txHash, proposal, resolve, reject) {
     web3.eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
         reject(error);
       } else {
         if (receipt == null) {
           setTimeout(function() {
-            transactionReceiptAsync(txHash, resolve, reject);
+            transactionReceiptAsync(txHash, proposal, resolve, reject);
           }, interval);
         } else {
-          resolve(receipt);
+					resolve(receipt);
         }
       }
     });
   };
-
   if (Array.isArray(txHash)) {
     var promises = [];
     txHash.forEach(function(oneTxHash) {
@@ -764,11 +833,13 @@ function getTransactionReceiptMined(txHash, interval) {
     });
     return Promise.all(promises);
   } else {
+
     return new Promise(function(resolve, reject) {
       transactionReceiptAsync(txHash, resolve, reject);
     });
   }
 };
+
 
 function timeConverter(UNIX_timestamp) {
   var a = new Date(UNIX_timestamp * 1000);

@@ -10,7 +10,7 @@ var canUserVote;
 var myContractInstance;
 var WAD = 1000000000000000000;
 var modalShow = false;
-var contract_address = "0x2dfbafe223d9ab442b7af35ac580642ec3a26917";
+var contract_address = "0x19e51afd3efa98a6e4b82d3834de174d7a33f9b5";
 var contract_abi = [
   {
     "constant": false,
@@ -42,7 +42,7 @@ var contract_abi = [
         "type": "uint256"
       },
       {
-        "name": "proposalBatch",
+        "name": "proposalBatchNumber",
         "type": "uint256"
       }
     ],
@@ -304,6 +304,10 @@ var contract_abi = [
       {
         "name": "winningProposalOptionName",
         "type": "bytes32"
+      },
+      {
+        "name": "proposalBatchNumber",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -619,9 +623,9 @@ function setStatus(message) {
 }
 
 
-function giveRightToVote() {  
+function giveRightToVoteMember() {  
   var address = $("#giveRightToVoteAddress").val();
-  myContractInstance.giveRightToVote(address, function(error, result) {
+  myContractInstance.giveRightToVoteMember(address, function(error, result) {
     if (!error) {
       getTransactionReceiptMined(result).then(
         function(receipt) {
@@ -666,6 +670,7 @@ function finalizeProposal() {
 
 function createProposal() {  
   var proposalName = $("#proposalName").val();
+  var batchNumber = $("#batchNumber").val();
   var optionName1 = $("#optionName1").val();
   var optionName2 = $("#optionName2").val();
   var optionName3 = $("#optionName3").val();
@@ -674,7 +679,7 @@ function createProposal() {
   var votingTime = $("#votingTime").val();
   var error=false;
 
-  if(proposalName.length>32 || optionName1.length>32 || optionName2.length>32 || optionName3.length>32 || optionName4.length>32 || optionName5.length>32 ){
+  if(optionName1.length>32 || optionName2.length>32 || optionName3.length>32 || optionName4.length>32 || optionName5.length>32 ){
     error=true;
     $("#myModalNoRefresh").modal();
     $("#myModalTitle1").html("Proposal Title or Options Too Long");
@@ -706,7 +711,7 @@ function createProposal() {
   console.log("votingTime = " + votingTime);
 
   if(!error){
-    myContractInstance.createProposal(proposalName, optionNamesHex, votingTime, function(error, result) {
+    myContractInstance.createProposal(proposalName, optionNamesHex, votingTime, batchNumber, function(error, result) {
       if (!error) {
         getTransactionReceiptMined(result).then(
           function(receipt) {
@@ -765,7 +770,8 @@ var loadPage = () => {
 // Inital loading of the page
 if (document.readyState !== 'complete') {
   // Document has not finished loaded yet, load the page when it is complete
-  window.addEventListener('load', function() {
+  window.addEventListener('load', async () => {
+    await ethereum.enable();
     loadPage();
   })
 } else {
