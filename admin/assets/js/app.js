@@ -10,7 +10,7 @@ var canUserVote;
 var myContractInstance;
 var WAD = 1000000000000000000;
 var modalShow = false;
-// var contract_address = "0xEea584517644eb0B82eAba9B33CFA0ceF7A3F7B2";
+//var contract_address = "0xEea584517644eb0B82eAba9B33CFA0ceF7A3F7B2";
 var contract_address = "0x19e51afd3efa98a6e4b82d3834de174d7a33f9b5";
 var contract_abi = [
   {

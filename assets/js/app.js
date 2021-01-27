@@ -621,6 +621,7 @@ async function getClosedProposalDetail(proposalNumber) {
 		closedhtmlstr = closedhtmlstr + "Total Votes Casted: " + numCastedVotes + "<br>";
 		closedhtmlstr = closedhtmlstr + "Time Started: " + votingStartStr + "<br>";
 		closedhtmlstr = closedhtmlstr + "Time Ended: " + votingEndStr + "<br>";
+		closedhtmlstr = closedhtmlstr + "Proposal Batch: " + proposalBatch + "<br>";
 		$("#closedPropsalsContainer").html(closedhtmlstr);
 	}
 }
