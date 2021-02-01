@@ -579,10 +579,14 @@ async function getProposalDetail(proposalNumber) {
 
 	let proposalDetailsForVoter = await getDataPromiseWithTwoArgs(myContractInstance.methods.getProposalDetailsForVoter, proposalNumber, account);
 	let { proposalName, numOptions: numOptionsForVoter, optionNames } = proposalDetailsForVoter;
-	console.log(proposalDetailsForVoter)
 
 	let votingEndStr = timeConverter(parseInt(votingStart) + parseInt(votingTime));
-	if (numOptionsForVoter === "0") {
+
+	if (isEnded === true) {
+		htmlstr += ""
+	}
+
+	else if (numOptionsForVoter === "0") {
 		htmlstr += "<h4 style=\"padding-top: 20px; color:#000\">Proposal #" + proposalNumber + ": Already voted</h4><br>";
 		// $("#openPropsalsContainer").html(htmlstr);
 	} else {

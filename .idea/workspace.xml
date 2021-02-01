@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e866044d-d836-45ce-a357-69747fc638ee" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/assets/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/admin/assets/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +33,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1611565495087</updated>
-      <workItem from="1611565496206" duration="12154000" />
+      <workItem from="1611565496206" duration="12891000" />
+      <workItem from="1611837850489" duration="551000" />
+      <workItem from="1612178313284" duration="1042000" />
     </task>
     <servers />
   </component>
@@ -53,7 +54,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/admin/assets/js/app.js</url>
           <line>11</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
