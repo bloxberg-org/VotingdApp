@@ -4,18 +4,30 @@
   <title>Voting Dapp Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Latest compiled and minified CSS -->
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <link rel=icon type=image/png sizes=32x32 href="https://bloxberg.org/favicon-32x32.png">
-    <link rel=icon type=image/png sizes=96x96 href="https://bloxberg.org/favicon-96x96.png">
-    <link rel=icon type=image/png sizes=16x16 href="https://bloxberg.org/favicon-16x16.png">
-   <link href="assets/css/app.css" rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet" /> 
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+  <link rel="apple-touch-icon" href="../assets/images/favicons/logo.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="../assets/images/favicons/logo.png"
+    />
+    <link rel="mask-icon" color="#6151cc" href="../assets/images/favicons/logo.png" />
+  <link rel=icon type=image/png sizes=32x32 href="https://bloxberg.org/favicon-32x32.png" />
+    <link rel=icon type=image/png sizes=96x96 href="https://bloxberg.org/favicon-96x96.png" />
+    <link rel=icon type=image/png sizes=16x16 href="https://bloxberg.org/favicon-16x16.png" />
+   <link href="assets/css/app.css" rel='stylesheet' type='text/css' />
   <script src="assets/js/app.js"></script>
 </head>
 <body>
+  <div class="body-container">
   <header class="header">
-      <div class="container">
-        <a href="https://bloxberg.org" class="header-logo"></a>
+      <div class="header-container">
+        <a href="https://bloxberg.org" alt="logo" class="logo-container">
+          <img class="logo-img" src="assets/images/bloxberg-logo_neue-Farben.png"></img>
+        </a>
       </div>
     </header>
   <div class="container-fluid">
@@ -86,7 +98,7 @@
       <p>Only chairperson can perform these actions</p>
 
 
-<h4 style="padding-top: 20px; color:#000">Create Proposal</h4><br>
+<h4 style="padding-top: 20px; ">Create Proposal</h4><br>
   
   <input type="text" class="form-control" id="proposalName" placeholder="Enter proposal name (required)"><br>
   <input type="text" class="form-control" id="batchNumber" placeholder="Enter the batch number (required)"><br>
@@ -102,23 +114,30 @@
      <br><hr>
    
 
-   <h4 style="padding-top: 20px; color:#000">Give Right to Vote (Member)</h4><br>
+   <h4 style="padding-top: 20px; ">Give Right to Vote (Member)</h4><br>
   <input type="text" class="form-control" id="giveRightToVoteAddress" placeholder="Enter voter address"><br>
      <button class="btn btn-primary btn-lg" onclick="giveRightToVoteMember();">TRANSACT</button>
      <br><hr>
 
-       <h4 style="padding-top: 20px; color:#000">Revoke Right to Vote</h4><br>
+       <h4 style="padding-top: 20px; ">Revoke Right to Vote</h4><br>
   <input type="text" class="form-control" id="revokeRightToVoteAddress" placeholder="Enter voter address"><br>
      <button class="btn btn-primary btn-lg" onclick="revokeRightToVote();">TRANSACT</button>
      <br><hr>
 
-     <h4 style="padding-top: 20px; color:#000">Finalize Proposal</h4><br>
+     <h4 style="padding-top: 20px; ">Finalize Proposal</h4><br>
   <input type="text" class="form-control" id="proposalNumber" placeholder="Enter proposal ID"><br>
      <button class="btn btn-primary btn-lg" onclick="finalizeProposal();">TRANSACT</button>
      <br><hr>
 
-      <h4 style="padding-top: 20px; color:#000">Read Contract</h4><br>  
-     <a href="https://blockexplorer.bloxberg.org/address/0x2dfbafe223d9ab442b7af35ac580642ec3a26917/read_contract" target="blank"><button class="btn btn-primary btn-lg">CLICK HERE</button></a>
+     <h4 style="padding-top: 20px; ">Change voting weight </h4><br>
+     <input type="text" class="form-control" id="voterAddress" placeholder="Enter address"><br>
+     <input type="text" class="form-control" id="newVotingWeight" placeholder="Enter new weight"><br>
+      <button class="btn btn-primary btn-lg" onclick="changeVotingWeight();">TRANSACT</button>
+      <br><hr>
+
+
+      <h4 style="padding-top: 20px; ">Read Contract</h4><br>  
+     <a href="https://blockexplorer.bloxberg.org/address/0x8b0Ba3C029FC12ba1FBeED4A6F7510cB3401885e/read_contract" target="blank"><button class="btn btn-primary btn-lg">CLICK HERE</button></a>
      <br><hr>
     
       
@@ -131,17 +150,16 @@
 
 <div id="status"></div> 
 
-  </div>
 
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 <div class="modal-dialog modal-lg" role="document">
 <div class="modal-content">
 <div class="modal-header">
-<h4 class="modal-title" id="myModalTitle"></h4>
+<h4 class="modal-text modal-title" id="myModalTitle"></h4>
 <button type="button" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 </div>
 <div class="modal-body">
-<p id="myModalText"></p>
+<p class ="modal-text" id="myModalText"></p>
 </div>
 <div class="modal-footer">
 <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" onclick="javascript:window.location.reload()">Close</button>
@@ -154,11 +172,11 @@
 <div class="modal-dialog modal-lg" role="document">
 <div class="modal-content">
 <div class="modal-header">
-<h4 class="modal-title" id="myModalTitle1"></h4>
+<h4 class="modal-text modal-title" id="myModalTitle1"></h4>
 <button type="button" onclick="javascript:window.location.reload()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 </div>
 <div class="modal-body">
-<p id="myModalText1"></p>
+<p class ="modal-text" id="myModalText1"></p>
 </div>
 <div class="modal-footer">
 <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
@@ -166,12 +184,25 @@
 </div>
 </div>
 </div>
-<div id="footercontainer">
- 
-  </div>
+
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://code.jquery.com/jquery-3.0.0-beta1.js"></script>
   <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.9.0/dist/web3.min.js"></script>
+
+</div>
+
+  <footer class="footer">
+      <div class="container-footer">
+        <p id="rights" class="rights"></p>
+        <script>
+          year = new Date().getFullYear();
+          document.getElementById("rights").innerHTML =
+            '<p class="rights">' +
+            year +
+            " bloxberg Network. All rights reserved.</p>";
+        </script>
+      </div>
+    </footer>
 </body>
 </html>

@@ -1,0 +1,16 @@
+FROM python:latest
+
+USER 0:0
+RUN groupadd -r -g 999 docker
+RUN useradd -m -d /home/node/app -u 999 -g docker -s /bin/bash -r docker
+RUN mkdir -p /home/voteingApp
+ADD / ./home/voteingApp
+RUN chown -R 999.999 ./home/voteingApp
+WORKDIR /home/voteingApp
+COPY . .
+
+RUN apt-get update && apt-get install python3
+ADD start.sh /
+USER 999:999
+
+ENTRYPOINT [ "/start.sh" ]

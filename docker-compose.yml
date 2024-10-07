@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  voteingapp:
+    container_name: voteingapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 18000:18000
+    restart: unless-stopped

@@ -17,5 +17,6 @@ python -m http.server
 ```
 
 
+or follow [instructions here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server).
 
-or follow [instructions here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server)
+
